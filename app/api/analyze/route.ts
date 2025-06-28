@@ -1,185 +1,210 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { NextRequest, NextResponse } from "next/server";
+import { GoogleGenAI, Type } from "@google/genai";
 
-// Initialize Gemini AI
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 
-interface RedditPost {
-  data: {
-    title?: string
-    selftext?: string
-    body?: string
-    score: number
-    subreddit: string
-    created_utc: number
-    permalink: string
-  }
-}
+const GOOGLE_API_KEY = 'AIzaSyBIljjOW-VWKXCcIDlBdSZ_Kx98KG-UeXg';
+const ai = new GoogleGenAI({
+  apiKey:GOOGLE_API_KEY, // <-- set this in .env
+});
 
-interface RedditResponse {
-  data: {
-    children: RedditPost[]
-  }
-}
 
-async function fetchRedditData(username: string) {
+
+
+
+
+
+export async function GET(request: NextRequest) {
   try {
-    const response = await fetch(`https://www.reddit.com/user/${username}.json`, {
-      headers: {
-        'User-Agent': 'RedditAnalyzer/1.0'
-      }
-    })
+    const { searchParams } = new URL(request.url);
+    const username = searchParams.get("username");
 
-    if (!response.ok) {
-      throw new Error(`Reddit API error: ${response.status}`)
+    if (!username) {
+      return NextResponse.json({ error: 'Username is required' }, { status: 400 });
     }
 
-    const data: RedditResponse = await response.json()
-    return data.data.children
-  } catch (error) {
-    console.error('Error fetching Reddit data:', error)
-    throw new Error('Failed to fetch Reddit data')
-  }
-}
+     if (!GOOGLE_API_KEY) {
+      return NextResponse.json(
+        {
+          error:
+            "Google GenAI API key not configured. Please add GOOGLE_API_KEY to your environment variables.",
+        },
+        { status: 500 },
+      );
+    }
 
-function analyzeRedditData(posts: RedditPost[]) {
-  const comments = posts
-    .map(post => post.data.body || post.data.selftext || post.data.title)
-    .filter(Boolean)
-    .slice(0, 50) // Limit to recent posts
+    // Fetch Reddit data
+    const redditResponse = await fetch(`https://www.reddit.com/user/${username}.json`, {
+      headers: {
+        'User-Agent': 'RedditAnalyzer/1.0',
+      },
+    });
 
-  const subreddits = [...new Set(posts.map(post => post.data.subreddit))]
-  
-  const timestamps = posts.map(post => new Date(post.data.created_utc * 1000))
-  
-  const totalScore = posts.reduce((sum, post) => sum + (post.data.score || 0), 0)
-  
-  return {
-    comments,
-    subreddits,
-    timestamps,
-    totalScore,
-    postCount: posts.length
-  }
-}
+    if (!redditResponse.ok) {
+      if (redditResponse.status === 404) {
+        return NextResponse.json({ error: 'User not found or profile is private' }, { status: 404 });
+      }
+      throw new Error(`Reddit API error: ${redditResponse.status}`);
+    }
 
-function getRandomFromArray<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)]
-}
+    const redditData = await redditResponse.json();
+    console.log('Reddit data fetched successfully:', redditData); //------ Debugging line to check Reddit data
+    
+    if (!redditData.data || !redditData.data.children || redditData.data.children.length === 0) {
+      return NextResponse.json({ error: 'No public activity found for this user' }, { status: 404 });
+    }
 
-async function generateAnalysis(redditData: any) {
-  const prompt = `You are a humorous mental wellness AI. Analyze the following Reddit user data and return a JSON response with these exact fields:
+    // Process Reddit data
+    const posts = redditData.data.children;
+    const comments = posts.filter((post: any) => post.data.body).slice(0, 50); // Limit to recent 50 comments
+    const subreddits = Array.from(new Set(posts.map((post: any) => post.data.subreddit))).slice(0, 10);
+    
+    // Create account age calculation
+    const accountCreated = posts[0]?.data?.created_utc;
+    const accountAge = accountCreated 
+      ? `${Math.floor((Date.now() / 1000 - accountCreated) / (365 * 24 * 3600))} years`
+      : 'Unknown';
+
+    // Prepare data for OpenAI
+    const commentTexts = comments.map((comment: any) => comment.data.body).join('\n');
+    const redditSummary = {
+      totalComments: comments.length,
+      topSubreddits: subreddits,
+      recentComments: commentTexts.slice(0, 3000), // Limit text length
+      accountAge,
+    };
+
+    // OpenAI Analysis
+    const prompt = `You are a humorous mental wellness AI. Analyze the following Reddit user data and return a JSON response with exactly this structure:
 
 {
-  "vibeScore": (number 0-10),
-  "vibeDescription": "one-line sarcastic description",
-  "playlistTitle": "custom Spotify playlist title",
-  "playlistTheme": "emotional theme description",
+  "vibeScore": [number 0-10],
+  "vibeDescription": "[one-line sarcastic description]",
+  "playlistTitle": "[creative Spotify playlist title]",
+  "playlistTheme": "[short emotional theme description]",
   "recommendations": {
     "books": ["book1", "book2", "book3"],
     "movies": ["movie1", "movie2", "movie3"],
     "shows": ["show1", "show2", "show3"]
   },
-  "therapyReasons": ["reason1", "reason2", "reason3"],
-  "psychologicalSummary": "short, eerily accurate psychological summary",
-  "archetype": "quirky archetype like 'The Enlightened Troll'",
-  "peakSpiralHour": "guess their emotional witching hour with sarcastic comment",
-  "aestheticDiagnosis": "assign a Tumblr-core aesthetic with description",
-  "copingMechanisms": ["🧃 mechanism1", "🧸 mechanism2", "💅 mechanism3", "🌙 mechanism4"],
-  "unhingedComment": "most emotionally feral comment for dramatic reading",
-  "moodTrend": "mock sentiment analysis with ironic chart description"
+  "therapyMemes": ["meme-style therapy reason 1", "meme-style therapy reason 2", "meme-style therapy reason 3"],
+  "psychologicalSummary": "[eerily accurate 2-3 sentence psychological summary that's funny but insightful]"
 }
 
-Make it funny, a little too real, and meme-friendly. Use Gen Z language and be sarcastic but not mean.
+Make it funny, a little too real, and meme-friendly. Base your analysis on patterns in their comments, subreddit choices, and overall vibe.
 
 Reddit User Data:
-Comments: ${JSON.stringify(redditData.comments.slice(0, 10))}
-Subreddits: ${JSON.stringify(redditData.subreddits.slice(0, 10))}
-Post Count: ${redditData.postCount}
-Total Score: ${redditData.totalScore}`
+Total Comments: ${redditSummary.totalComments}
+Top Subreddits: ${redditSummary.topSubreddits.join(', ')}
+Account Age: ${redditSummary.accountAge}
 
-  try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
-    const result = await model.generateContent(prompt)
-    const response = await result.response
-    const text = response.text()
-    
-    // Extract JSON from the response
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
-    if (!jsonMatch) {
-      throw new Error('No JSON found in response')
-    }
-    
-    return JSON.parse(jsonMatch[0])
-  } catch (error) {
-    console.error('Error generating analysis:', error)
-    
-    // Fallback response if AI fails
-    return {
-      vibeScore: Math.floor(Math.random() * 10) + 1,
-      vibeDescription: "Your digital aura is giving 'chronically online but make it aesthetic' ✨",
-      playlistTitle: "Songs for Scrolling at 3AM",
-      playlistTheme: "Melancholic indie vibes with a dash of existential dread",
-      recommendations: {
-        books: ["The Midnight Library", "Anxious People", "Digital Minimalism"],
-        movies: ["Her", "Black Mirror: San Junipero", "The Social Dilemma"],
-        shows: ["BoJack Horseman", "Russian Doll", "The Good Place"]
+Recent Comments Sample:
+${redditSummary.recentComments}`;
+ // ────────────────────────────────────────────────────────────────────────
+    // 4. Ask Gemini for JSON (schema forces correct formatting)
+    // ────────────────────────────────────────────────────────────────────────
+    const geminiRes = await ai.models.generateContent({
+      model: "gemini-2.5-flash", // quick + cheap, change if you need deeper reasoning
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            vibeScore: { type: Type.NUMBER },
+            vibeDescription: { type: Type.STRING },
+            playlistTitle: { type: Type.STRING },
+            playlistTheme: { type: Type.STRING },
+            recommendations: {
+              type: Type.OBJECT,
+              properties: {
+                books: {
+                  type: Type.ARRAY,
+                  items: { type: Type.STRING },
+                },
+                movies: {
+                  type: Type.ARRAY,
+                  items: { type: Type.STRING },
+                },
+                shows: {
+                  type: Type.ARRAY,
+                  items: { type: Type.STRING },
+                },
+              },
+              propertyOrdering: ["books", "movies", "shows"],
+            },
+            therapyMemes: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING },
+            },
+            psychologicalSummary: { type: Type.STRING },
+          },
+          propertyOrdering: [
+            "vibeScore",
+            "vibeDescription",
+            "playlistTitle",
+            "playlistTheme",
+            "recommendations",
+            "therapyMemes",
+            "psychologicalSummary",
+          ],
+        },
       },
-      therapyReasons: [
-        "Your comment history reads like a diary you forgot was public 📖",
-        "You argue with strangers about things that won't matter in 5 years 🤡",
-        "Your sleep schedule is more chaotic than your Reddit activity 😴"
-      ],
-      psychologicalSummary: "You're the type of person who uses humor to deflect from real emotions while simultaneously oversharing in comment threads. Classic defense mechanism with a side of digital validation seeking.",
-      archetype: "The Philosophical Lurker",
-      peakSpiralHour: "Your vibe peaks at 2:47 AM on weekdays. Therapy opens at 9 AM bestie.",
-      aestheticDiagnosis: "Your soul smells like lavender candles and unfinished creative projects. Diagnosis: Cottagecore-Academic-Chaotic-Neutral.",
-      copingMechanisms: ["🧃 emotional support juice box", "🧸 inner child meditation podcast", "💅 2am self-care rituals", "🌙 moon water manifestation"],
-      unhingedComment: "I can't believe I'm having this conversation about cereal rankings at 3 AM but here we are and I have OPINIONS",
-      moodTrend: "Your emotional graph looks like a seismograph during an earthquake. Peak chaos occurs during Mercury retrograde (coincidence? I think not)."
-    }
-  }
-}
+    });
 
-export async function POST(request: NextRequest) {
-  try {
-    const { username } = await request.json()
+    const analysisText = geminiRes.text; // guaranteed JSON string
 
-    if (!username) {
-      return NextResponse.json(
-        { error: 'Username is required bestie 💀' },
-        { status: 400 }
-      )
-    }
-
-    // Check if Gemini API key is available
-    if (!process.env.GEMINI_API_KEY) {
-      console.warn('GEMINI_API_KEY not found, using fallback response')
-    }
-
-    // Fetch Reddit data
-    const redditPosts = await fetchRedditData(username)
-    
-    if (redditPosts.length === 0) {
-      return NextResponse.json(
-        { error: 'No Reddit activity found for this user or profile is private 🔒' },
-        { status: 404 }
-      )
+    // ────────────────────────────────────────────────────────────────────────
+    // 5. Parse & fall back if needed (logic identical)
+    // ────────────────────────────────────────────────────────────────────────
+    let analysis: any;
+    try {
+      analysis = JSON.parse(analysisText ?? '{}');
+      console.log('Analysis result:', analysis); //------ Debugging line to check analysis result
+    } catch {
+      analysis = {
+        vibeScore: 5,
+        vibeDescription:
+          "Your Reddit activity suggests you're human, and that's concerning.",
+        playlistTitle: "Songs for Confused Souls",
+        playlistTheme: "Existential crisis with a beat",
+        recommendations: {
+          books: [
+            "How to Win Friends and Influence People",
+            "The Art of Not Being Governed",
+            "Meditations",
+          ],
+          movies: ["Inside Out", "Her", "The Social Network"],
+          shows: ["Black Mirror", "The Good Place", "Community"],
+        },
+        therapyMemes: [
+          "You argue with strangers online more than you talk to friends IRL",
+          "Your comment history reads like a diary you never meant to publish",
+          "You have strong opinions about things that don't affect your daily life",
+        ],
+        psychologicalSummary:
+          "You're the type of person who has Wikipedia tabs open about topics you'll never use, yet somehow this makes you feel intellectually superior. Classic Reddit behavior, honestly.",
+      };
     }
 
-    // Analyze Reddit data
-    const redditData = analyzeRedditData(redditPosts)
+    // ────────────────────────────────────────────────────────────────────────
+    // 6. Assemble response
+    // ────────────────────────────────────────────────────────────────────────
+    const payload = {
+      ...analysis,
+      username,
+      redditStats: {
+        totalComments: redditSummary.totalComments,
+        topSubreddits: redditSummary.topSubreddits,
+        accountAge: redditSummary.accountAge,
+      },
+    };
 
-    // Generate AI analysis
-    const analysis = await generateAnalysis(redditData)
-
-    return NextResponse.json(analysis)
-
-  } catch (error) {
-    console.error('Analysis error:', error)
+    return NextResponse.json(payload);
+  } catch (err) {
+    console.error("Analysis error:", err);
     return NextResponse.json(
-      { error: 'Something went wrong analyzing this user. Maybe they\'re too powerful for our AI? 🤖💀' },
-      { status: 500 }
-    )
+      { error: "Failed to analyze user data. Please try again." },
+      { status: 500 },
+    );
   }
 }
