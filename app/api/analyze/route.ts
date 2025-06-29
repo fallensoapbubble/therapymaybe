@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI, Type } from "@google/genai";
+import { config } from "@/newer/config"; 
 
-
-const GOOGLE_API_KEY = 'AIzaSyBIljjOW-VWKXCcIDlBdSZ_Kx98KG-UeXg';
 const ai = new GoogleGenAI({
-  apiKey:GOOGLE_API_KEY, // <-- set this in .env
+  apiKey: config.GOOGLE_API_KEY,
+  
 });
 
 
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Username is required' }, { status: 400 });
     }
 
-     if (!GOOGLE_API_KEY) {
+     if (!config.GOOGLE_API_KEY) {
       return NextResponse.json(
         {
           error:

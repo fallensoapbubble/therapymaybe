@@ -1,12 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-
-
-
-
-
-const Tavus_API_KEY = '1c7e269dcc374837a4b5d4bb8ec67b74';
-
+import { config } from '@/newer/config';
 
 
 
@@ -17,7 +10,7 @@ export async function GET(request: NextRequest) {
     const options = {
     method: "POST",
     headers: {
-      "x-api-key": Tavus_API_KEY,
+      "x-api-key": config.TAVUS_API_KEY,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -191,6 +184,6 @@ export async function GET(request: NextRequest) {
     
   } catch (error: any) {
     console.error('Room creation error:', error);
-    return NextResponse.redirect(`http://localhost:3000/api/room/?error=${encodeURIComponent('Failed to create session')}`);
+    return NextResponse.redirect(`${request.nextUrl.origin}/api/room/?error=${encodeURIComponent('Failed to create session')}`);
   }
 }

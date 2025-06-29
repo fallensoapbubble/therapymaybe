@@ -81,9 +81,10 @@ const RedditAnalyzer: React.FC = () => {
                 <input
                   type="text"
                   placeholder="enter reddit username"
+                  suppressHydrationWarning={true}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyPress}
                   className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder-slate-400 text-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-300"
                   disabled={loading}
                 />
