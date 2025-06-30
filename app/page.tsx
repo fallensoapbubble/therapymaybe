@@ -57,6 +57,7 @@ const RedditAnalyzer: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
+        
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
         <div className="absolute top-40 left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
@@ -64,13 +65,24 @@ const RedditAnalyzer: React.FC = () => {
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 py-12">
         {/* Header */}
+        <a
+            href="https://bolt.new"
+          >
+        <div
+          id="bolt-button"
+          className="absolute top-[2vw] right-[2vw] w-[6vw] h-[6vw] bg-[url('../images/bolt.png')]  bg-contain bg-no-repeat bg-center cursor-pointer transition-opacity duration-300"
+        >
+          
+          
+        </div>
+        </a>
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-4 mb-6">
             <div className="p-3 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl backdrop-blur-sm border border-white/20">
               <Brain className="w-8 h-8 text-purple-300" />
             </div>
             <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Reddit Vibe Analyzer
+              THERAPY MAYBE
             </h1>
             <div className="p-3 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-2xl backdrop-blur-sm border border-white/20">
               <Sparkles className="w-8 h-8 text-pink-300" />

@@ -632,6 +632,12 @@ video {
 .top-40 {
   top: 10rem;
 }
+.right-\[2vw\] {
+  right: 2vw;
+}
+.top-\[2vw\] {
+  top: 2vw;
+}
 .z-0 {
   z-index: 0;
 }
@@ -738,6 +744,9 @@ video {
 .h-full {
   height: 100%;
 }
+.h-\[6vw\] {
+  height: 6vw;
+}
 .min-h-screen {
   min-height: 100vh;
 }
@@ -773,6 +782,9 @@ video {
 }
 .w-full {
   width: 100%;
+}
+.w-\[6vw\] {
+  width: 6vw;
 }
 .min-w-fit {
   min-width: -moz-fit-content;
@@ -825,6 +837,9 @@ video {
 }
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+.cursor-pointer {
+  cursor: pointer;
 }
 .grid-cols-1 {
   grid-template-columns: repeat(1, minmax(0, 1fr));
@@ -1067,6 +1082,12 @@ video {
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
+.bg-\[url\(\'\/images\/bolt\.png\'\)\] {
+  background-image: url('/images/bolt.png');
+}
+.bg-\[url\(\'\.\.\/images\/bolt\.png\'\)\] {
+  background-image: url(/_next/static/media/bolt.4b77d839.png);
+}
 .from-amber-500\/20 {
   --tw-gradient-from: rgb(245 158 11 / 0.2) var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(245 158 11 / 0) var(--tw-gradient-to-position);
@@ -1231,9 +1252,18 @@ video {
 .to-white\/5 {
   --tw-gradient-to: rgb(255 255 255 / 0.05) var(--tw-gradient-to-position);
 }
+.bg-contain {
+  background-size: contain;
+}
 .bg-clip-text {
   -webkit-background-clip: text;
           background-clip: text;
+}
+.bg-center {
+  background-position: center;
+}
+.bg-no-repeat {
+  background-repeat: no-repeat;
 }
 .p-3 {
   padding: 0.75rem;
