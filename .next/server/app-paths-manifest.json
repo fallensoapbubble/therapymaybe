@@ -1,9 +1,6 @@
 {
-  "/_not-found": "app/_not-found.js",
-  "/api/room/delete/route": "app/api/room/delete/route.js",
-  "/api/analyze/route": "app/api/analyze/route.js",
-  "/api/room/route": "app/api/room/route.js",
   "/page": "app/page.js",
-  "/room/page": "app/room/page.js",
-  "/voice/page": "app/voice/page.js"
+  "/api/room/delete/route": "app/api/room/delete/route.js",
+  "/api/room/route": "app/api/room/route.js",
+  "/room/page": "app/room/page.js"
 }

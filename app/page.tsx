@@ -89,7 +89,7 @@ const RedditAnalyzer: React.FC = () => {
         {/* Room Button */}
         <div className="flex items-center justify-center mb-12">
           <button
-            onClick={() => window.open("/api/room", "_blank")}
+            onClick={() => window.open("/room", "_blank")}
             className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
           >
             Open Room
