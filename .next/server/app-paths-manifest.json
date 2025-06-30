@@ -1,5 +1,5 @@
 {
-  "/api/room/route": "app/api/room/route.js",
+  "/api/room/delete/route": "app/api/room/delete/route.js",
   "/page": "app/page.js",
-  "/api/analyze/route": "app/api/analyze/route.js"
+  "/api/room/route": "app/api/room/route.js"
 }

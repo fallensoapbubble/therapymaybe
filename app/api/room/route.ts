@@ -9,12 +9,12 @@ export async function GET(request: NextRequest) {
     const options = {
     method: "POST",
     headers: {
-      "x-api-key": process.env.TAVUS_API_KEY,
+      "x-api-key": process.env.TAVUS_API_KEY ?? "",
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       replica_id: "rb17cf590e15",
-      persona_id: "pb67e70fd25c",
+      persona_id: "p57eb14aedea",
       callback_url: "https://google.in",
       conversation_name: Math.random().toString(36).substring(2, 15),
       conversational_context: "You are a compassionate and understanding therapist, dedicated to creating a safe and welcoming space where users feel heard and valued. Your responses should be empathetic, insightful, and encouraging, fostering meaningful conversations that promote personal growth and emotional well-being. You listen attentively, validate feelings, and gently guide users toward self-reflection and empowerment. Maintain a calm and reassuring presence, offering thoughtful advice with a touch of kindness and wisdom.",
