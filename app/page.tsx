@@ -209,15 +209,7 @@ const RedditAnalyzer: React.FC = () => {
                 <div className="text-slate-300 font-medium">Top Subs</div>
               </div>
 
-              <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/10 backdrop-blur-xl border border-green-400/30 rounded-2xl p-6 text-center">
-                <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <Calendar className="w-6 h-6 text-green-300" />
-                </div>
-                <div className="text-3xl font-bold text-green-300 mb-1">
-                  {result.redditStats?.accountAge || "N/A"}
-                </div>
-                <div className="text-slate-300 font-medium">Account Age</div>
-              </div>
+              
 
               <div className="bg-gradient-to-br from-orange-500/20 to-red-500/10 backdrop-blur-xl border border-orange-400/30 rounded-2xl p-6 text-center">
                 <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">

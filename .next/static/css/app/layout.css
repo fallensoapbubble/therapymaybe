@@ -629,11 +629,11 @@ video {
 .left-40 {
   left: 10rem;
 }
-.top-40 {
-  top: 10rem;
-}
 .right-\[2vw\] {
   right: 2vw;
+}
+.top-40 {
+  top: 10rem;
 }
 .top-\[2vw\] {
   top: 2vw;
@@ -741,11 +741,11 @@ video {
 .h-\[600px\] {
   height: 600px;
 }
-.h-full {
-  height: 100%;
-}
 .h-\[6vw\] {
   height: 6vw;
+}
+.h-full {
+  height: 100%;
 }
 .min-h-screen {
   min-height: 100vh;
@@ -780,11 +780,11 @@ video {
 .w-80 {
   width: 20rem;
 }
-.w-full {
-  width: 100%;
-}
 .w-\[6vw\] {
   width: 6vw;
+}
+.w-full {
+  width: 100%;
 }
 .min-w-fit {
   min-width: -moz-fit-content;
@@ -1076,17 +1076,14 @@ video {
 .bg-white\/5 {
   background-color: rgb(255 255 255 / 0.05);
 }
+.bg-\[url\(\'\.\.\/images\/bolt\.png\'\)\] {
+  background-image: url(/_next/static/media/bolt.4b77d839.png);
+}
 .bg-gradient-to-br {
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
 }
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
-}
-.bg-\[url\(\'\/images\/bolt\.png\'\)\] {
-  background-image: url('/images/bolt.png');
-}
-.bg-\[url\(\'\.\.\/images\/bolt\.png\'\)\] {
-  background-image: url(/_next/static/media/bolt.4b77d839.png);
 }
 .from-amber-500\/20 {
   --tw-gradient-from: rgb(245 158 11 / 0.2) var(--tw-gradient-from-position);
