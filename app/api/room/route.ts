@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { config } from '@/newer/config';
 
 
 
@@ -10,7 +9,7 @@ export async function GET(request: NextRequest) {
     const options = {
     method: "POST",
     headers: {
-      "x-api-key": config.TAVUS_API_KEY,
+      "x-api-key": process.env.TAVUS_API_KEY,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({

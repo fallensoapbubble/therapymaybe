@@ -1,14 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { config } from '@/newer/config';
 
 async function deleteTavusConversation(conversationId: string) {
 
-   const options = {method: 'DELETE', headers: {'x-api-key': config.TAVUS_API_KEY}};
+   const apiKey = process.env.TAVUS_API_KEY;
+   if (!apiKey) {
+     throw new Error('TAVUS_API_KEY is not defined');
+   }
+   const options = { method: 'DELETE', headers: { 'x-api-key': apiKey } };
 
-fetch(`https://tavusapi.com/v2/conversations/${conversationId}`, options)
-  .then(response => response.json())
-  .then(response => console.log(response))
-  .catch(err => console.error(err));
+   fetch(`https://tavusapi.com/v2/conversations/${conversationId}`, options)
+     .then(response => response.json())
+     .then(response => console.log(response))
+     .catch(err => console.error(err));
 }
 
 export async function GET(request: NextRequest) {
