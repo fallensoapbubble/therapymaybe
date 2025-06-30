@@ -94,7 +94,7 @@
         });
 
         // Join the room
-        callFrame.join({ url: '${a.meetingUrl}' });
+        callFrame.join({ url: '${a.meetingUrl}' , disableSentry: true});
 
         // Append iframe to the container
         const container = document.getElementById('video-call-container');

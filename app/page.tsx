@@ -1,17 +1,27 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Search, Sparkles, Brain, Loader2, AlertCircle, TrendingUp, Users, Calendar, MessageSquare } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  Search,
+  Sparkles,
+  Brain,
+  Loader2,
+  AlertCircle,
+  TrendingUp,
+  Users,
+  Calendar,
+  MessageSquare,
+} from "lucide-react";
 
 const RedditAnalyzer: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleAnalyze = async () => {
     if (!username.trim()) {
-      setError('Please enter a Reddit username.');
+      setError("Please enter a Reddit username.");
       return;
     }
 
@@ -20,23 +30,25 @@ const RedditAnalyzer: React.FC = () => {
     setResult(null);
 
     try {
-      const res = await fetch(`/api/analyze?username=${encodeURIComponent(username)}`);
+      const res = await fetch(
+        `/api/analyze?username=${encodeURIComponent(username)}`
+      );
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || 'Unknown error');
+        throw new Error(data.error || "Unknown error");
       }
 
       const data = await res.json();
       setResult(data);
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch data');
+      setError(err.message || "Failed to fetch data");
     } finally {
       setLoading(false);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !loading) {
+    if (e.key === "Enter" && !loading) {
       handleAnalyze();
     }
   };
@@ -65,9 +77,23 @@ const RedditAnalyzer: React.FC = () => {
             </div>
           </div>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Dive deep into the digital psyche and uncover the hidden patterns in Reddit behavior. 
-            <span className="text-purple-300 font-semibold"> Let's analyze some vibes ✨</span>
+            Dive deep into the digital psyche and uncover the hidden patterns in
+            Reddit behavior.
+            <span className="text-purple-300 font-semibold">
+              {" "}
+              Let's analyze some vibes ✨
+            </span>
           </p>
+        </div>
+
+        {/* Room Button */}
+        <div className="flex items-center justify-center mb-12">
+          <button
+            onClick={() => window.open("/api/room", "_blank")}
+            className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            Open Room
+          </button>
         </div>
 
         {/* Search Section */}
@@ -109,14 +135,16 @@ const RedditAnalyzer: React.FC = () => {
                 )}
               </button>
             </div>
-            
+
             {loading && (
               <div className="mt-6 text-center">
                 <div className="inline-flex items-center gap-3 text-slate-300">
                   <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
                   <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce animation-delay-100"></div>
                   <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce animation-delay-200"></div>
-                  <span className="ml-2">Diving into the digital psyche...</span>
+                  <span className="ml-2">
+                    Diving into the digital psyche...
+                  </span>
                 </div>
               </div>
             )}
@@ -139,9 +167,12 @@ const RedditAnalyzer: React.FC = () => {
             {/* Results Header */}
             <div className="text-center">
               <h2 className="text-3xl font-bold text-white mb-2">
-                Analysis Complete for <span className="text-purple-300">u/{result.username}</span>
+                Analysis Complete for{" "}
+                <span className="text-purple-300">u/{result.username}</span>
               </h2>
-              <p className="text-slate-300">Here's what we discovered about their digital soul ✨</p>
+              <p className="text-slate-300">
+                Here's what we discovered about their digital soul ✨
+              </p>
             </div>
 
             {/* Main Stats Grid */}
@@ -150,7 +181,9 @@ const RedditAnalyzer: React.FC = () => {
                 <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <Brain className="w-6 h-6 text-purple-300" />
                 </div>
-                <div className="text-3xl font-bold text-purple-300 mb-1">{result.vibeScore}/10</div>
+                <div className="text-3xl font-bold text-purple-300 mb-1">
+                  {result.vibeScore}/10
+                </div>
                 <div className="text-slate-300 font-medium">Vibe Score</div>
               </div>
 
@@ -169,7 +202,7 @@ const RedditAnalyzer: React.FC = () => {
                   <Calendar className="w-6 h-6 text-green-300" />
                 </div>
                 <div className="text-3xl font-bold text-green-300 mb-1">
-                  {result.redditStats?.accountAge || 'N/A'}
+                  {result.redditStats?.accountAge || "N/A"}
                 </div>
                 <div className="text-slate-300 font-medium">Account Age</div>
               </div>
@@ -191,7 +224,9 @@ const RedditAnalyzer: React.FC = () => {
                 <TrendingUp className="w-7 h-7 text-purple-300" />
                 Vibe Analysis
               </h3>
-              <p className="text-xl text-slate-300 leading-relaxed">{result.vibeDescription}</p>
+              <p className="text-xl text-slate-300 leading-relaxed">
+                {result.vibeDescription}
+              </p>
             </div>
 
             {/* Detailed Results Grid */}
@@ -204,7 +239,9 @@ const RedditAnalyzer: React.FC = () => {
                 </h3>
                 <div className="space-y-3">
                   <div className="bg-green-500/10 rounded-xl p-4">
-                    <p className="text-green-300 font-semibold text-lg">{result.playlistTitle}</p>
+                    <p className="text-green-300 font-semibold text-lg">
+                      {result.playlistTitle}
+                    </p>
                   </div>
                   <p className="text-slate-300">{result.playlistTheme}</p>
                 </div>
@@ -217,14 +254,18 @@ const RedditAnalyzer: React.FC = () => {
                   Top Subreddits
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {result.redditStats?.topSubreddits?.map((sub: string, idx: number) => (
-                    <span 
-                      key={idx}
-                      className="bg-blue-500/20 text-blue-200 px-3 py-1 rounded-full text-sm font-medium"
-                    >
-                      r/{sub}
-                    </span>
-                  )) || <span className="text-slate-400">No subreddits found</span>}
+                  {result.redditStats?.topSubreddits?.map(
+                    (sub: string, idx: number) => (
+                      <span
+                        key={idx}
+                        className="bg-blue-500/20 text-blue-200 px-3 py-1 rounded-full text-sm font-medium"
+                      >
+                        r/{sub}
+                      </span>
+                    )
+                  ) || (
+                    <span className="text-slate-400">No subreddits found</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -237,10 +278,17 @@ const RedditAnalyzer: React.FC = () => {
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {result.therapyMemes?.map((meme: string, idx: number) => (
-                  <div key={idx} className="bg-red-500/10 rounded-xl p-4 border border-red-400/20">
+                  <div
+                    key={idx}
+                    className="bg-red-500/10 rounded-xl p-4 border border-red-400/20"
+                  >
                     <p className="text-slate-300">{meme}</p>
                   </div>
-                )) || <p className="text-slate-400">No therapy recommendations available</p>}
+                )) || (
+                  <p className="text-slate-400">
+                    No therapy recommendations available
+                  </p>
+                )}
               </div>
             </div>
 
@@ -250,9 +298,13 @@ const RedditAnalyzer: React.FC = () => {
               <div className="bg-gradient-to-br from-purple-500/20 to-indigo-500/10 backdrop-blur-xl border border-purple-400/30 rounded-2xl p-6">
                 <h3 className="text-lg font-bold text-white mb-4">📚 Books</h3>
                 <ul className="space-y-2">
-                  {result.recommendations?.books?.map((book: string, idx: number) => (
-                    <li key={idx} className="text-slate-300 text-sm">{book}</li>
-                  )) || <li className="text-slate-400">No books found</li>}
+                  {result.recommendations?.books?.map(
+                    (book: string, idx: number) => (
+                      <li key={idx} className="text-slate-300 text-sm">
+                        {book}
+                      </li>
+                    )
+                  ) || <li className="text-slate-400">No books found</li>}
                 </ul>
               </div>
 
@@ -260,9 +312,13 @@ const RedditAnalyzer: React.FC = () => {
               <div className="bg-gradient-to-br from-pink-500/20 to-rose-500/10 backdrop-blur-xl border border-pink-400/30 rounded-2xl p-6">
                 <h3 className="text-lg font-bold text-white mb-4">🎬 Movies</h3>
                 <ul className="space-y-2">
-                  {result.recommendations?.movies?.map((movie: string, idx: number) => (
-                    <li key={idx} className="text-slate-300 text-sm">{movie}</li>
-                  )) || <li className="text-slate-400">No movies found</li>}
+                  {result.recommendations?.movies?.map(
+                    (movie: string, idx: number) => (
+                      <li key={idx} className="text-slate-300 text-sm">
+                        {movie}
+                      </li>
+                    )
+                  ) || <li className="text-slate-400">No movies found</li>}
                 </ul>
               </div>
 
@@ -270,9 +326,13 @@ const RedditAnalyzer: React.FC = () => {
               <div className="bg-gradient-to-br from-cyan-500/20 to-teal-500/10 backdrop-blur-xl border border-cyan-400/30 rounded-2xl p-6">
                 <h3 className="text-lg font-bold text-white mb-4">📺 Shows</h3>
                 <ul className="space-y-2">
-                  {result.recommendations?.shows?.map((show: string, idx: number) => (
-                    <li key={idx} className="text-slate-300 text-sm">{show}</li>
-                  )) || <li className="text-slate-400">No shows found</li>}
+                  {result.recommendations?.shows?.map(
+                    (show: string, idx: number) => (
+                      <li key={idx} className="text-slate-300 text-sm">
+                        {show}
+                      </li>
+                    )
+                  ) || <li className="text-slate-400">No shows found</li>}
                 </ul>
               </div>
             </div>
@@ -283,7 +343,9 @@ const RedditAnalyzer: React.FC = () => {
                 <Brain className="w-7 h-7 text-purple-300" />
                 Psychological Summary
               </h3>
-              <p className="text-lg text-slate-300 leading-relaxed">{result.psychologicalSummary}</p>
+              <p className="text-lg text-slate-300 leading-relaxed">
+                {result.psychologicalSummary}
+              </p>
             </div>
           </div>
         )}
@@ -294,8 +356,13 @@ const RedditAnalyzer: React.FC = () => {
             <div className="max-w-md mx-auto">
               <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
                 <div className="text-6xl mb-4">🔮</div>
-                <h3 className="text-xl font-bold text-white mb-2">Ready to dive deep?</h3>
-                <p className="text-slate-400">Enter a Reddit username above to begin the psychological journey</p>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  Ready to dive deep?
+                </h3>
+                <p className="text-slate-400">
+                  Enter a Reddit username above to begin the psychological
+                  journey
+                </p>
               </div>
             </div>
           </div>
@@ -354,7 +421,9 @@ const RedditAnalyzer: React.FC = () => {
       `}</style>
       <footer className="text-center py-8 text-slate-400 text-sm">
         <p>Made with 💀 and questionable life choices</p>
-        <p className="mt-1">Your data stays between you, us, and the FBI agent watching you</p>
+        <p className="mt-1">
+          Your data stays between you, us, and the FBI agent watching you
+        </p>
       </footer>
     </div>
   );

@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
 
     // Process Reddit data
     const posts = redditData.data.children;
-    const comments = posts.filter((post: any) => post.data.body).slice(0, 50); // Limit to recent 50 comments
+    const comments = posts.filter((post: any) => post.data.body).slice(0, 15); // Limit to recent 15 comments
     const subreddits = Array.from(new Set(posts.map((post: any) => post.data.subreddit))).slice(0, 10);
     
     // Create account age calculation
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
     const redditSummary = {
       totalComments: comments.length,
       topSubreddits: subreddits,
-      recentComments: commentTexts.slice(0, 2500), // Limit text length
+      recentComments: commentTexts.slice(0, 1500), // Limit text length
       accountAge,
     };
 
@@ -101,7 +101,7 @@ ${redditSummary.recentComments}`;
     // 4. Ask Gemini for JSON (schema forces correct formatting)
     // ────────────────────────────────────────────────────────────────────────
     const geminiRes = await ai.models.generateContent({
-      model: "gemini-2.5-flash", // quick + cheap, change if you need deeper reasoning
+      model: "gemini-1.5-flash", // quick + cheap, change if you need deeper reasoning
       contents: prompt,
       config: {
         responseMimeType: "application/json",

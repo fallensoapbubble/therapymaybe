@@ -149,7 +149,7 @@ export async function GET(request: NextRequest) {
         });
 
         // Join the room
-        callFrame.join({ url: '${conversationData.meetingUrl}' });
+        callFrame.join({ url: '${conversationData.meetingUrl}' , disableSentry: true});
 
         // Append iframe to the container
         const container = document.getElementById('video-call-container');
