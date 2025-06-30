@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
 
     // Process Reddit data
     const posts = redditData.data.children;
-    const comments = posts.filter((post: any) => post.data.body).slice(0, 50); // Limit to recent 50 comments
+    const comments = posts.filter((post: any) => post.data.body).slice(0, 25); // Limit to recent 25 comments
     const subreddits = Array.from(new Set(posts.map((post: any) => post.data.subreddit))).slice(0, 10);
     
     // Create account age calculation
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
     const redditSummary = {
       totalComments: comments.length,
       topSubreddits: subreddits,
-      recentComments: commentTexts.slice(0, 3000), // Limit text length
+      recentComments: commentTexts.slice(0, 1500), // Limit text length
       accountAge,
     };
 
