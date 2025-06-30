@@ -352,6 +352,10 @@ const RedditAnalyzer: React.FC = () => {
           animation-duration: 0.7s;
         }
       `}</style>
+      <footer className="text-center py-8 text-slate-400 text-sm">
+        <p>Made with 💀 and questionable life choices</p>
+        <p className="mt-1">Your data stays between you, us, and the FBI agent watching you</p>
+      </footer>
     </div>
   );
 };
